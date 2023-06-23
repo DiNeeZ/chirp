@@ -1,7 +1,6 @@
 import { authMiddleware } from "@clerk/nextjs";
 
 const withClerkMiddleware = () => {
-  console.log("middleware running");
   authMiddleware();
 };
 

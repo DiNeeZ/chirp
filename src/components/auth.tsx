@@ -3,12 +3,11 @@ import Image from "next/image";
 import Title, { TitleVariant } from "./ui/title";
 import userIconUrl from "~/assets/user.png";
 
+
 const CreatePostWizard = () => {
   const { user } = useUser();
 
   if (!user) return null;
-
-  console.log(user);
 
   if (user?.profileImageUrl) {
     return (
