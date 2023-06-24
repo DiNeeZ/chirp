@@ -4,13 +4,18 @@ import { api } from "~/utils/api";
 import Auth from "~/components/auth";
 import Button from "~/components/ui/button";
 import PostView from "~/components/post-view";
+import Loading from '~/components/ui/loading';
 
 const Home = () => {
   const user = useUser();
 
   const { data, isLoading } = api.posts.getAll.useQuery();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return (
+    <div className='w-screen h-screen flex items-center justify-center'>
+      <Loading />
+    </div>
+  );
 
   if (!data) return <div>Something went wrong!</div>;
 
