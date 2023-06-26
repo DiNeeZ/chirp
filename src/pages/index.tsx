@@ -1,23 +1,20 @@
 import Head from "next/head";
 import { useUser } from "@clerk/nextjs";
+import type { NextPage } from "next";
 import { api } from "~/utils/api";
+
 import Auth from "~/components/auth";
 import Button from "~/components/ui/button";
-import PostView from "~/components/post-view";
-import Loading from '~/components/ui/loading';
+import Feed from "~/components/feed";
 
-const Home = () => {
-  const user = useUser();
+const Home: NextPage = () => {
+  const { isSignedIn, isLoaded: userLoaded } = useUser();
 
-  const { data, isLoading } = api.posts.getAll.useQuery();
+  //Start fetching asap
+  api.posts.getAll.useQuery();
 
-  if (isLoading) return (
-    <div className='w-screen h-screen flex items-center justify-center'>
-      <Loading />
-    </div>
-  );
-
-  if (!data) return <div>Something went wrong!</div>;
+  //Return empty div if user isn't loaded
+  if (!userLoaded) return <div />;
 
   return (
     <>
@@ -33,7 +30,7 @@ const Home = () => {
         >
           <div className="w-full border-b border-slate-400">
             <Auth />
-            {user.isSignedIn && (
+            {isSignedIn && (
               <div className="mb-4 flex items-center justify-between gap-6 px-6 py-4">
                 <div className="grow rounded-md border-2 border-slate-400 focus-within:border-slate-200">
                   <input
@@ -46,11 +43,7 @@ const Home = () => {
               </div>
             )}
           </div>
-          <div className="flex w-full flex-col">
-            {[...data]?.map((fullPost) => (
-              <PostView {...fullPost} key={fullPost.post.id} />
-            ))}
-          </div>
+          <Feed />
         </div>
       </main>
     </>
