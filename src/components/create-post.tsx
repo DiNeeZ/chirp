@@ -1,8 +1,10 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
+import toast from "react-hot-toast";
 
 import { api } from "~/utils/api";
 import Button from "./ui/button";
+import { LoadingSpinner } from "./ui/loading";
 
 const CreatePost = () => {
   const [input, setInput] = useState("");
@@ -13,6 +15,15 @@ const CreatePost = () => {
     onSuccess: () => {
       setInput("");
       void ctx.posts.getAll.invalidate();
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+
+      if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to post! Please try again later");
+      }
     },
   });
 
@@ -40,7 +51,9 @@ const CreatePost = () => {
           disabled={isPosting}
         />
       </div>
-      <Button type="submit">Add</Button>
+      <Button className="w-24" type="submit" disabled={isPosting}>
+        {isPosting ? <LoadingSpinner size={18} /> : "Post"}
+      </Button>
     </form>
   );
 };

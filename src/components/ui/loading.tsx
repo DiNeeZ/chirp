@@ -1,11 +1,11 @@
 import React from "react";
 
-export const Loading = (props: { size?: number }) => {
+export const LoadingSpinner = (props: { size?: number }) => {
   return (
     <div role="status">
       <svg
         aria-hidden="true"
-        className="mr-2 animate-spin fill-violet-600 text-gray-200 dark:text-gray-600"
+        className="animate-spin fill-violet-600 text-gray-200 dark:text-gray-600"
         width={props.size ?? 40}
         height={props.size ?? 40}
         viewBox="0 0 100 101"
@@ -28,6 +28,6 @@ export const Loading = (props: { size?: number }) => {
 
 export const LoadingPage = () => (
   <div className="flex h-screen w-screen items-center justify-center">
-    <Loading size={52} />
+    <LoadingSpinner size={52} />
   </div>
 );
