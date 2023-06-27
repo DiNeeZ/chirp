@@ -4,8 +4,8 @@ import type { NextPage } from "next";
 import { api } from "~/utils/api";
 
 import Auth from "~/components/auth";
-import Button from "~/components/ui/button";
 import Feed from "~/components/feed";
+import CreatePost from "~/components/create-post";
 
 const Home: NextPage = () => {
   const { isSignedIn, isLoaded: userLoaded } = useUser();
@@ -30,18 +30,7 @@ const Home: NextPage = () => {
         >
           <div className="w-full border-b border-slate-400">
             <Auth />
-            {isSignedIn && (
-              <div className="mb-4 flex items-center justify-between gap-6 px-6 py-4">
-                <div className="grow rounded-md border-2 border-slate-400 focus-within:border-slate-200">
-                  <input
-                    type="text"
-                    placeholder="Type some emojis!"
-                    className="h-full w-full border-none bg-transparent px-4 py-2 outline-none"
-                  />
-                </div>
-                <Button>Add</Button>
-              </div>
-            )}
+            {isSignedIn && <CreatePost />}
           </div>
           <Feed />
         </div>

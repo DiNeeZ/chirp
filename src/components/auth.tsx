@@ -1,40 +1,7 @@
 import { useUser, SignInButton, SignOutButton, SignIn } from "@clerk/nextjs";
-import Image from "next/image";
+
+import UserAvatar from "./user-avatar";
 import Title, { TitleVariant } from "./ui/title";
-import userIconUrl from "~/assets/user.png";
-
-
-const CreatePostWizard = () => {
-  const { user } = useUser();
-
-  if (!user) return null;
-
-  if (user?.profileImageUrl) {
-    return (
-      <div>
-        <Image
-          width={64}
-          height={64}
-          src={user.profileImageUrl}
-          alt="profile image"
-          className="rounded-full"
-        />
-      </div>
-    );
-  } else {
-    return (
-      <div>
-        <Image
-          width={64}
-          height={64}
-          src={userIconUrl}
-          alt="profile image not exist"
-          className="rounded-full"
-        />
-      </div>
-    );
-  }
-};
 
 const Auth = () => {
   const user = useUser();
@@ -65,7 +32,7 @@ const Auth = () => {
       ) : (
         <>
           <div className="flex items-center gap-4">
-            <CreatePostWizard />
+            <UserAvatar user={user.user} />
             <Title variant={TitleVariant.h2}>
               Hello, {user.user.fullName}!
             </Title>
