@@ -4,6 +4,7 @@ import type { RouterOutputs } from "~/utils/api";
 
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import Link from "next/link";
 
 type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 
@@ -11,6 +12,10 @@ dayjs.extend(relativeTime);
 
 const PostView = (props: PostWithUser) => {
   const { post, author } = props;
+
+  console.log(author.id);
+
+  const userId = author.id.replace(/^user_/, "");
 
   return (
     <div
@@ -26,11 +31,18 @@ const PostView = (props: PostWithUser) => {
       />
       <div>
         <div className="flex items-center gap-2 font-semibold text-slate-400">
-          <span>{author.fullName}</span>
+          <Link
+            href={`profile/${userId}`}
+            className="text-sm font-semibold text-violet-400 duration-150 hover:text-violet-500"
+          >
+            {author.fullName}
+          </Link>{" "}
           <span className="text-2xl">&middot;</span>
-          <span className="text-sm font-normal">
-            {dayjs(post.createdAt).fromNow()}
-          </span>
+          <Link href={`post/${post.id}`}>
+            <span className="text-sm font-normal text-blue-400 duration-150 hover:text-blue-500">
+              {dayjs(post.createdAt).fromNow()}
+            </span>
+          </Link>
         </div>
         <span className="text-2xl">{post.content}</span>
       </div>
