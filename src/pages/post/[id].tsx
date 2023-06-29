@@ -4,11 +4,15 @@ import { api } from "~/utils/api";
 import PageLayout from "~/components/page-layout";
 import PostView from "~/components/post-view";
 import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
+import { LoadingPage } from "~/components/ui/loading";
 
 const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
-  const { data } = api.posts.getById.useQuery({
+  const { data, isLoading } = api.posts.getById.useQuery({
     id,
   });
+
+  if (isLoading) return <LoadingPage />;
+
   if (!data) return <div>404</div>;
 
   return (

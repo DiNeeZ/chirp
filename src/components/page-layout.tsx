@@ -1,24 +1,30 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
 import type { PropsWithChildren } from "react";
+import { useRouter } from "next/router";
+import GoTop from "./ui/go-top";
+import { IoHomeSharp } from "react-icons/io5";
 
 const PageLayout = (props: PropsWithChildren) => {
   const { pathname } = useRouter();
-  const linkClassName =
-    pathname !== "/"
-      ? "text-blue-600 duration-150 hover:text-blue-500"
-      : "pointer-events-none text-blue-300";
+
   return (
     <main className="relative flex flex-col items-center justify-center">
-      <Link href={"/"} className={`absolute left-2 top-2 ${linkClassName}`}>
-        home
-      </Link>
+      {pathname !== "/" && (
+        <Link
+          href={"/"}
+          className="absolute left-4 top-4 text-violet-600 duration-150 hover:text-violet-500"
+        >
+          <IoHomeSharp className="h-7 w-7" />
+        </Link>
+      )}
+
       <div
         className="flex h-full min-h-screen w-full flex-col items-center
 			border-x border-slate-400 md:max-w-4xl"
       >
         {props.children}
       </div>
+      <GoTop />
     </main>
   );
 };

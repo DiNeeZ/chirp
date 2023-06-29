@@ -5,18 +5,14 @@ import type { RouterOutputs } from "~/utils/api";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 type PostWithUser = RouterOutputs["posts"]["getAll"][number];
 
 dayjs.extend(relativeTime);
 
 const PostView = (props: PostWithUser) => {
-  const router = useRouter();
   const { post, author } = props;
   const userId = author.id.replace("user_", "");
-
-  console.log(router);
 
   return (
     <div

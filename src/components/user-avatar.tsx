@@ -1,7 +1,7 @@
 import React from "react";
 import type { UserResource } from "@clerk/types";
 import Image from "next/image";
-import userIconUrl from "~/assets/user.png";
+import userIconUrl from "~/assets/images/user.png";
 
 type User = {
   user: UserResource;
