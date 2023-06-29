@@ -1,4 +1,3 @@
-import { clerkClient } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
 import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis";
@@ -8,7 +7,7 @@ import {
   privateProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
-import filterUserForClient from "../helpers/filterUserForClient";
+import addUserDataToPosts from "../helpers/addUserDataToPosts";
 
 // Create a new ratelimiter, that allows 3 requests per 1 minute
 const ratelimit = new Ratelimit({
@@ -18,37 +17,42 @@ const ratelimit = new Ratelimit({
 });
 
 export const postsRouter = createTRPCRouter({
-  getAll: publicProcedure.query(async ({ ctx }) => {
-    const posts = await ctx.prisma.post.findMany({
-      take: 100,
-      orderBy: [{ createdAt: "desc" }],
-    });
+  //Get Post by Id
+  getById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const post = await ctx.prisma.post.findUnique({
+        where: { id: input.id },
+      });
 
-    const users = (
-      await clerkClient.users.getUserList({
-        userId: posts.map((post) => post.authorId),
-        limit: 100,
+      if (!post) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return (await addUserDataToPosts([post]))[0];
+    }),
+  // Get All Posts
+  getAll: publicProcedure.query(({ ctx }) =>
+    ctx.prisma.post
+      .findMany({
+        take: 100,
+        orderBy: [{ createdAt: "desc" }],
       })
-    ).map(filterUserForClient);
-
-    return posts.map((post) => {
-      const author = users.find((user) => user.id === post.authorId);
-
-      if (!author)
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Author for post not found",
-        });
-
-      return {
-        post,
-        author: {
-          ...author,
-          username: author.username || author.fullName,
-        },
-      };
-    });
-  }),
+      .then(addUserDataToPosts)
+  ),
+  // Get All Posts Created by a Specific User
+  getPostsByUserId: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(({ ctx, input }) =>
+      ctx.prisma.post
+        .findMany({
+          where: {
+            authorId: input.userId,
+          },
+          take: 100,
+          orderBy: [{ createdAt: "desc" }],
+        })
+        .then(addUserDataToPosts)
+    ),
+  // Create a New Post
   create: privateProcedure
     .input(
       z.object({

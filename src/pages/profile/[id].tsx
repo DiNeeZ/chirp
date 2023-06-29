@@ -1,7 +1,11 @@
 import Head from "next/head";
+import Image from "next/image";
 import type { GetStaticProps, NextPage } from "next";
 import { api } from "~/utils/api";
+import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
 import PageLayout from "~/components/page-layout";
+import ProfileFeed from "~/components/profile-feed";
+
 import { Permanent_Marker } from "next/font/google";
 
 const permanentMarker = Permanent_Marker({
@@ -29,11 +33,11 @@ const ProfilePage: NextPage<{ userId: string }> = ({ userId }) => {
       <PageLayout>
         <div className="w-full border-b border-slate-300 pb-8">
           <div
-            className="flex h-36 w-full items-center justify-center
-						bg-gradient-to-tr from-slate-700 via-slate-600 to-slate-500"
+            className="flex h-36 w-full justify-center bg-gradient-to-tr from-slate-700 via-slate-600 to-slate-500
+						pt-2 text-center md:items-center md:pt-0"
           >
             <h2
-              className={`${permanentMarker.className} text-4xl font-bold tracking-widest text-slate-950`}
+              className={`${permanentMarker.className} text-3xl font-bold tracking-widest text-slate-950 md:text-4xl`}
             >
               {data.fullName}
             </h2>
@@ -51,26 +55,15 @@ const ProfilePage: NextPage<{ userId: string }> = ({ userId }) => {
             </div>
           </div>
         </div>
+        <ProfileFeed userId={userId} />
       </PageLayout>
     </>
   );
 };
 
-import { createServerSideHelpers } from "@trpc/react-query/server";
-import { appRouter } from "~/server/api/root";
-import { prisma } from "~/server/db";
-import SuperJSON from "superjson";
-import Image from "next/image";
-
 export const getStaticProps: GetStaticProps = async (context) => {
-  const ssg = createServerSideHelpers({
-    router: appRouter,
-    ctx: { prisma, userId: null },
-    transformer: SuperJSON,
-  });
-
+  const ssg = generateSSGHelper();
   const id = context.params?.id as string;
-
   const userId = `user_${id}`;
 
   await ssg.profile.getUserById.prefetch({ userId });
